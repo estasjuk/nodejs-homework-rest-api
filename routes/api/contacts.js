@@ -14,12 +14,12 @@ const addSchema = Joi.object({
   phone: Joi.string().pattern(/^\+?[0-9]{3,}$/).required().messages({
       "any.required": `"phone" is required`,
       "string.empty": `"phone" cannot be empty`,
-      "string.base": `"phone" must be string`
+      "string.base": `"phone" must be a string`
   }),
   email: Joi.string().required().messages({
     "any.required": `"email" is required`,
     "string.empty": `"email" cannot be empty`,
-    "string.base": `"email" must be string`
+    "string.base": `"email" must be a string`
 }),
 })
 

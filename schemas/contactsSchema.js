@@ -17,14 +17,19 @@ const addSchema = Joi.object({
     favorite: Joi.boolean(),
 });
 
+const updateSchema = Joi.object({
+    name: Joi.string(),
+    phone: Joi.string(),
+    email: Joi.string().email(),
+});
+
 const updateFavoriteSchema = Joi.object({
-    favorite: Joi.boolean().required().messages({
-        
-    }),
+    favorite: Joi.boolean(),
 });
 
 module.exports = {
     addSchema,
+    updateSchema,
     updateFavoriteSchema,
 }
 

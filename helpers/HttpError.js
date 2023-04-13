@@ -1,16 +1,16 @@
-const errorMessages = {
-    400: "Bad Request",
-    401: "Unauthorized",
-    403: "Forbidden",
-    404: "Not Found",
-    409: "Conflict"
-}
+// const errorMessages = {
+//     400: "Bad Request",
+//     401: "Unauthorized",
+//     403: "Forbidden",
+//     404: "Not Found",
+//     409: "Email in use"
+// }
 
 class HttpError extends Error {
-  constructor(statusCode, message = errorMessages[statusCode]) {
+  constructor(status, message) {
     super(message);
-    this.statusCode = statusCode;
+    this.status = status;
   }
 }
 
-module.exports = { HttpError };
+module.exports = HttpError;

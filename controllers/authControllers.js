@@ -1,5 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const gravatar = require('gravatar');
+const path = require('path');
+const fs = require('fs/promises');
 
 const { User } = require('../models/users');
 
@@ -8,6 +11,8 @@ const HttpError = require('../helpers/HttpError');
 const { controllerWrapper } = require('../utils/contollerWrapper');
 
 const { SECRET_KEY } = process.env;
+
+const avatarsDir = path.join(__dirname, '../', 'public', 'avatars');
 
 const registerUser = async (req, res) => {
     const { email, password } = req.body;
@@ -18,7 +23,8 @@ const registerUser = async (req, res) => {
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({...req.body, password: hashPassword});
+    const avatarURL = gravatar.url(email);
+    const newUser = await User.create({...req.body, password: hashPassword, avatarURL});
     res.status(201).json({
         status: 'success',
         code: 201,
@@ -30,7 +36,7 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-    const { email, password, subscription} = req.body;
+    const { email, password} = req.body;
     const user = await User.findOne({ email });
     if (!user) { 
         throw new HttpError(401, "Email or password is wrong");
@@ -79,9 +85,9 @@ const logoutUser = async (req, res) => {
 const updateUserSubscription = async (req, res, next) => {
     const { subscription } = req.body;
     const { _id } = req.user;
-    const result = await User.findByIdAndUpdate(_id, {subscription});
-    if(!result) {
-            throw new HttpError(404, 'Not found');
+    const result = await User.findByIdAndUpdate(_id, { subscription });
+    if (!result) {
+        throw new HttpError(404, 'Not found');
     }
     else if (result.subscription === subscription) {
         next(
@@ -90,11 +96,29 @@ const updateUserSubscription = async (req, res, next) => {
         return;
     }
     res.status(200).json({
-      status: 'success',
-      code: 200,
-      message: "Status successfully updated"
+        status: 'success',
+        code: 200,
+        message: "Status successfully updated"
     });
-}
+};
+
+const updateAvatar = async (req, res) => { 
+    const { _id } = req.user;
+    const { path: tempUpload, originalname } = req.file;
+    const filename = `${_id}_${originalname}`;
+    const resultUpload = path.join(avatarsDir, filename);
+    await fs.rename(tempUpload, resultUpload);
+    const avatarURL = path.join('avatars', filename);
+    await User.findByIdAndUpdate(_id, { avatarURL })
+    
+    res.status(200).json({
+        status: 'success',
+        code: 200,
+        avatarURL,
+    });
+};
+
+
 
 module.exports = {
     registerUser: controllerWrapper(registerUser),
@@ -102,4 +126,5 @@ module.exports = {
     getCurrent: controllerWrapper(getCurrent),
     logoutUser: controllerWrapper(logoutUser),
     updateUserSubscription: controllerWrapper(updateUserSubscription),
+    updateAvatar: controllerWrapper(updateAvatar),
 }

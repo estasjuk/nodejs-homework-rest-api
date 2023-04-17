@@ -5,7 +5,7 @@ const upload = require('../../middlewares/upload');
 const authenticate = require('../../middlewares/authenticate');
 
 const { registerUser, loginUser, getCurrent, logoutUser, updateUserSubscription, updateAvatar } = require('../../controllers/authControllers');
-const { registerSchema, loginSchema, updateSubscriptionSchema } = require('../../models/users');
+const { registerSchema, loginSchema, updateSubscriptionSchema } = require('../../schemas/usersSchema');
 
 const router = express.Router();
 

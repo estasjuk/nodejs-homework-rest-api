@@ -3,11 +3,10 @@ const jwt = require('jsonwebtoken');
 const gravatar = require('gravatar');
 const path = require('path');
 const fs = require('fs/promises');
-
-const { User } = require('../models/users');
-
+const resizeAvatar = require('../utils/resizeAvatar');
 const HttpError = require('../helpers/HttpError');
 
+const { User } = require('../models/users');
 const { controllerWrapper } = require('../utils/contollerWrapper');
 
 const { SECRET_KEY } = process.env;
@@ -105,6 +104,7 @@ const updateUserSubscription = async (req, res, next) => {
 const updateAvatar = async (req, res) => { 
     const { _id } = req.user;
     const { path: tempUpload, originalname } = req.file;
+    await resizeAvatar(tempUpload, 250, 250);
     const filename = `${_id}_${originalname}`;
     const resultUpload = path.join(avatarsDir, filename);
     await fs.rename(tempUpload, resultUpload);

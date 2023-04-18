@@ -5,7 +5,7 @@ const authenticate = require('../../middlewares/authenticate');
 const validateBody = require('../../utils/validateBody');
 
 const { getAllContacts, getContactById, addContact, updateContact, updateStatusContact, removeContact} = require('../../controllers/contactsControllers');
-const { addSchema, updateSchema, updateFavoriteSchema } = require('../../models/contacts');
+const { addSchema, updateSchema, updateFavoriteSchema } = require('../../schemas/contactsSchema');
 
 const router = express.Router();
 
